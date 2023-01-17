@@ -1,0 +1,30 @@
+#!/bin/bash
+# ./task [BOJ_ID]
+
+if [ "$#" -ne 1 ]
+then
+	echo "USAGE: ./task [BOJ_ID]"
+	exit 1
+fi
+BOJ=$1
+
+# locate files
+TMP=$(dirname $0)/..
+DIR=$(cd $TMP; pwd)
+MRS=$DIR/src/main.rs
+SID=$(printf "%04d" $(echo "$BOJ / 100" | bc))
+RST=$DIR/src/id/$SID/Q$BOJ.rs
+
+# generate .rs if not exists
+if [ ! -d $DIR/src/id/$SID ]
+then
+	mkdir -p $DIR/src/id/$SID
+fi
+if [ ! -f $RST ]
+then
+	cp $DIR/tool/skel.rs $RST
+fi
+
+# copy content to main.rs
+cp $RST $MRS
+
