@@ -3,7 +3,7 @@
 
 use std::io;
 
-fn main() {
+pub fn main() {
     let mut num = 1;
     for _ in 0..3 {
         let mut buf = String::new();

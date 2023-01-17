@@ -1,8 +1,6 @@
-// BOJ 2675 [Repeat String]
-// Supported by GitHub Copilot
-
-use std::io::stdin;
+mod id;
+use id::d0026::q2675;
 
 fn main() {
-
+    q2675::main();
 }

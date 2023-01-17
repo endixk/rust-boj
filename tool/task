@@ -13,18 +13,23 @@ TMP=$(dirname $0)/..
 DIR=$(cd $TMP; pwd)
 MRS=$DIR/src/main.rs
 SID=$(printf "%04d" $(echo "$BOJ / 100" | bc))
-RST=$DIR/src/id/$SID/Q$BOJ.rs
+RST=$DIR/src/id/d$SID/q$BOJ.rs
 
 # generate .rs if not exists
-if [ ! -d $DIR/src/id/$SID ]
+if [ ! -d $DIR/src/id/d$SID ]
 then
-	mkdir -p $DIR/src/id/$SID
+	mkdir -p $DIR/src/id/d$SID
+	echo "pub mod d$SID;" >> $DIR/src/id.rs
+	touch $DIR/src/id/d$SID.rs
 fi
 if [ ! -f $RST ]
 then
 	cp $DIR/tool/skel.rs $RST
+	echo "pub mod q$BOJ;" >> $DIR/src/id/d$SID.rs
 fi
 
-# copy content to main.rs
-cp $RST $MRS
-
+# modify main.rs
+OD=$(grep use $MRS | cut -d: -f3 | head -c5)
+OQ=$(grep use $MRS | cut -d: -f5 | head -c5)
+sed "s/$OD/d$SID/g" $(echo $MRS) | sed "s/$OQ/q$BOJ/g" > $DIR/.main.rs
+mv $DIR/.main.rs $MRS
