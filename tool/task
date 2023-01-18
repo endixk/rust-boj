@@ -9,27 +9,27 @@ fi
 BOJ=$1
 
 # locate files
-TMP=$(dirname $0)/..
-DIR=$(cd $TMP; pwd)
+TMP=$(dirname "$0")/..
+DIR=$(cd "$TMP" || exit 1; pwd)
 MRS=$DIR/src/main.rs
-SID=$(printf "%04d" $(echo "$BOJ / 100" | bc))
+SID=$(printf "%04d" "$(echo "$BOJ / 100" | bc)")
 RST=$DIR/src/id/d$SID/q$BOJ.rs
 
 # generate .rs if not exists
-if [ ! -d $DIR/src/id/d$SID ]
+if [ ! -d "$DIR"/src/id/d"$SID" ]
 then
-	mkdir -p $DIR/src/id/d$SID
-	echo "pub mod d$SID;" >> $DIR/src/id.rs
-	touch $DIR/src/id/d$SID.rs
+	mkdir -p "$DIR"/src/id/d"$SID"
+	echo "pub mod d$SID;" >> "$DIR"/src/id/mod.rs
+	touch "$DIR"/src/id/d"$SID"/mod.rs
 fi
-if [ ! -f $RST ]
+if [ ! -f "$RST" ]
 then
-	cp $DIR/tool/skel.rs $RST
-	echo "pub mod q$BOJ;" >> $DIR/src/id/d$SID.rs
+	cp "$DIR"/tool/skel.rs "$RST"
+	echo "pub mod q$BOJ;" >> "$DIR"/src/id/d"$SID"/mod.rs
 fi
 
 # modify main.rs
-OD=$(grep use $MRS | cut -d: -f3 | head -c5)
-OQ=$(grep use $MRS | cut -d: -f5 | head -c5)
-sed "s/$OD/d$SID/g" $(echo $MRS) | sed "s/$OQ/q$BOJ/g" > $DIR/.main.rs
-mv $DIR/.main.rs $MRS
+OD=$(grep use "$MRS" | cut -d: -f3 | head -c5)
+OQ=$(grep use "$MRS" | cut -d: -f5 | head -c5)
+sed "s/$OD/d$SID/g" "$MRS" | sed "s/$OQ/q$BOJ/g" > "$DIR"/.main.rs
+mv "$DIR"/.main.rs "$MRS"
