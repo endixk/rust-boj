@@ -1,10 +1,9 @@
 // BOJ **** []
 // Supported by GitHub Copilot
 
-use std::io;
-use std::fmt::Write;
+use std::io::{self, BufRead, Write};
 
 pub fn main() {
-    let mut buf = String::new();
-    print!("{}", buf);
+    let mut si = io::BufReader::new(io::stdin().lock());
+    let mut so = io::BufWriter::new(io::stdout().lock());
 }
