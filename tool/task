@@ -24,7 +24,7 @@ then
 fi
 if [ ! -f "$RST" ]
 then
-	cp "$DIR"/tool/skel.rs "$RST"
+	sed "s/----/$BOJ/g" "$DIR"/tool/skel.rs > "$RST"
 	echo "pub mod q$BOJ;" >> "$DIR"/src/id/d"$SID"/mod.rs
 fi
 
