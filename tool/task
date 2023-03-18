@@ -19,17 +19,24 @@ RST=$DIR/src/id/d$SID/q$BOJ.rs
 if [ ! -d "$DIR"/src/id/d"$SID" ]
 then
 	mkdir -p "$DIR"/src/id/d"$SID"
-	echo "pub mod d$SID;" >> "$DIR"/src/id/mod.rs
+	cp "$DIR"/src/id/mod.rs "$DIR"/.mod.rs
+	echo "pub mod d$SID;" >> "$DIR"/.mod.rs
+	sort "$DIR"/.mod.rs > "$DIR"/src/id/mod.rs
+	rm "$DIR"/.mod.rs
 	touch "$DIR"/src/id/d"$SID"/mod.rs
 fi
 if [ ! -f "$RST" ]
 then
 	sed "s/----/$BOJ/g" "$DIR"/tool/skel.rs > "$RST"
-	echo "pub mod q$BOJ;" >> "$DIR"/src/id/d"$SID"/mod.rs
+	cp "$DIR"/src/id/d"$SID"/mod.rs "$DIR"/.mod.rs
+	echo "pub mod q$BOJ;" >> "$DIR"/.mod.rs
+	sort "$DIR"/.mod.rs > "$DIR"/src/id/d"$SID"/mod.rs
+	rm "$DIR"/.mod.rs
 fi
 
 # modify main.rs
 OD=$(grep use "$MRS" | cut -d: -f3)
 OQ=$(grep use "$MRS" | cut -d: -f5 | cut -d\; -f1)
 sed "s/$OD/d$SID/g" "$MRS" | sed "s/$OQ/q$BOJ/g" > "$DIR"/.main.rs
-mv "$DIR"/.main.rs "$MRS"
+cp "$DIR"/.main.rs "$MRS"
+rm "$DIR"/.main.rs
