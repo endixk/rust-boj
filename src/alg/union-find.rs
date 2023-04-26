@@ -23,27 +23,25 @@ fn union(root: &mut Vec<usize>, rank: &mut Vec<usize>, x: usize, y: usize) {
     }
 }
 
-fn union_cnt(root: &mut Vec<usize>,
-             rank: &mut Vec<usize>,
-             cnt: &mut Vec<usize>, x: usize, y: usize) -> usize {
+fn union_size(root: &mut Vec<usize>,
+              rank: &mut Vec<usize>,
+              size: &mut Vec<usize>, x: usize, y: usize) -> usize {
     let x = find(root, x);
     let y = find(root, y);
     if x != y {
         if rank[x] < rank[y] {
             root[x] = y;
-            cnt[y] += cnt[x];
-            cnt[x] = 1;
-            cnt[y]
+            size[y] += size[x];
+            size[y]
         } else {
             root[y] = x;
-            cnt[x] += cnt[y];
-            cnt[y] = 1;
+            size[x] += size[y];
             if rank[x] == rank[y] {
                 rank[x] += 1;
             }
-            cnt[x]
+            size[x]
         }
     } else {
-        cnt[x]
+        size[x]
     }
 }
