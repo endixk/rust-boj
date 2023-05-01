@@ -1,3 +1,6 @@
+use std::collections::BinaryHeap;
+use std::cmp::Reverse;
+
 fn dijkstra(adj: &Vec<Vec<(usize, usize)>>, dist: &mut Vec<usize>, src: usize) {
     let mut pq = BinaryHeap::new();
     pq.push((Reverse(0), src));
