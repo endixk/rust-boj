@@ -11,6 +11,15 @@ impl SegTree {
         Self { n: m, v: vec![0; m<<1], lazy: vec![0; m<<1] }
     }
 
+    fn build(&mut self, a: &[usize]) {
+        for i in 0..a.len() {
+            self.v[self.n + i] = a[i];
+        }
+        for i in (1..self.n).rev() {
+            self.v[i] = self.v[i<<1] + self.v[i<<1|1];
+        }
+    }
+
     fn propagate(&mut self, x: usize, s: usize, e: usize) {
         if self.lazy[x] == 0 { return; }
         self.v[x] += self.lazy[x] * (e - s + 1);
@@ -61,6 +70,15 @@ impl MinSegTree {
         Self { n: m, v: vec![INF; m<<1], lazy: vec![INF; m<<1] }
     }
 
+    fn build(&mut self, a: &[usize]) {
+        for i in 0..a.len() {
+            self.v[self.n + i] = a[i];
+        }
+        for i in (1..self.n).rev() {
+            self.v[i] = self.v[i<<1].min(self.v[i<<1|1]);
+        }
+    }
+
     fn propagate(&mut self, x: usize, s: usize, e: usize) {
         if self.lazy[x] == INF { return; }
         self.v[x] = self.v[x].min(self.lazy[x]);
@@ -93,6 +111,64 @@ impl MinSegTree {
         } else {
             let m = (s + e) >> 1;
             self.query(x<<1, s, m, l, r).min(self.query(x<<1|1, m+1, e, l, r))
+        }
+    }
+}
+
+// Maximum Segment Tree with Lazy Propagation
+struct MaxSegTree {
+    n: usize,
+    v: Vec<usize>,
+    lazy: Vec<usize>,
+}
+impl MaxSegTree {
+    fn new(n: usize) -> Self {
+        let mut m = 1;
+        while m < n { m <<= 1; }
+        Self { n: m, v: vec![0; m<<1], lazy: vec![0; m<<1] }
+    }
+
+    fn build(&mut self, a: &[usize]) {
+        for i in 0..a.len() {
+            self.v[self.n + i] = a[i];
+        }
+        for i in (1..self.n).rev() {
+            self.v[i] = self.v[i<<1].max(self.v[i<<1|1]);
+        }
+    }
+
+    fn propagate(&mut self, x: usize, s: usize, e: usize) {
+        if self.lazy[x] == 0 { return; }
+        self.v[x] = self.v[x].max(self.lazy[x]);
+        if s < e {
+            self.lazy[x<<1] = self.lazy[x].max(self.lazy[x<<1]);
+            self.lazy[x<<1|1] = self.lazy[x].max(self.lazy[x<<1|1]);
+        }
+        self.lazy[x] = 0;
+    }
+
+    fn update(&mut self, x: usize, s: usize, e: usize, l: usize, r: usize, v: usize) {
+        self.propagate(x, s, e);
+        if r < s || e < l { return; }
+        if l <= s && e <= r {
+            self.lazy[x] = v;
+            self.propagate(x, s, e);
+        } else {
+            let m = (s + e) >> 1;
+            self.update(x<<1, s, m, l, r, v);
+            self.update(x<<1|1, m+1, e, l, r, v);
+            self.v[x] = self.v[x<<1].max(self.v[x<<1|1]);
+        }
+    }
+
+    fn query(&mut self, x: usize, s: usize, e: usize, l: usize, r: usize) -> usize {
+        self.propagate(x, s, e);
+        if r < s || e < l { return 0; }
+        if l <= s && e <= r {
+            self.v[x]
+        } else {
+            let m = (s + e) >> 1;
+            self.query(x<<1, s, m, l, r).max(self.query(x<<1|1, m+1, e, l, r))
         }
     }
 }
