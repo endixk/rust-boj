@@ -4,7 +4,7 @@
 use std::io;
 use std::io::prelude::*;
 
-fn read(si: &mut io::BufReader<io::StdinLock>) -> String {
+fn read<T>(si: &mut T) -> String where T: Read {
     let mut s = String::new();
     si.read_to_string(&mut s).unwrap();
     s
