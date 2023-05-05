@@ -10,5 +10,8 @@ pub mod q1240;
 pub mod q1241;
 pub mod q1242;
 pub mod q1245;
+pub mod q1246;
+pub mod q1247;
+pub mod q1248;
 pub mod q1259;
 pub mod q1260;
