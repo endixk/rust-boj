@@ -8,3 +8,4 @@ pub mod q1932;
 pub mod q1966;
 pub mod q1978;
 pub mod q1991;
+pub mod q1992;
