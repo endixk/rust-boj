@@ -22,6 +22,7 @@ pub mod d0049;
 pub mod d0052;
 pub mod d0054;
 pub mod d0055;
+pub mod d0060;
 pub mod d0075;
 pub mod d0076;
 pub mod d0081;

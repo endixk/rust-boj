@@ -1,6 +1,5 @@
 // BOJ 28016 [Prize Drawing]
 // Supported by GitHub Copilot
-// TODO UNSOLVED
 
 use std::io;
 use std::io::prelude::*;
@@ -15,44 +14,6 @@ fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
     T: std::str::FromStr,
     <T as std::str::FromStr>::Err: std::fmt::Debug {
     it.next().unwrap().parse().unwrap()
-}
-
-fn dfs(balls: &mut Vec<Vec<u128>>, a: &Vec<Vec<u8>>,
-       i: usize, j: usize, n: usize, m: usize) -> bool {
-    if i == n-1 { return true }
-    if a[i+1][j] == 0 {
-        balls[i+1][j] += balls[i][j];
-        return dfs(balls, a, i+1, j, n, m)
-    }
-
-    let mut l = a[i][j-1] == 0 && a[i+1][j-1] == 0;
-    let mut r = a[i][j+1] == 0 && a[i+1][j+1] == 0;
-    if l {
-        balls[i+1][j-1] += balls[i][j] >> 1;
-        l = dfs(balls, a, i+1, j-1, n, m);
-        if l {
-            if r {
-                balls[i+1][j+1] += balls[i][j] >> 1;
-                r = dfs(balls, a, i+1, j+1, n, m);
-            }
-            if !r {
-                balls[i+1][j-1] += balls[i][j] >> 1;
-                dfs(balls, a, i+1, j-1, n, m);
-            }
-        } else {
-            balls[i+1][j+1] += balls[i][j];
-            return dfs(balls, a, i+1, j+1, n, m)
-        }
-    } else {
-        return if r {
-            balls[i+1][j+1] += balls[i][j];
-            dfs(balls, a, i+1, j+1, n, m)
-        } else {
-            false
-        }
-    }
-
-    true
 }
 
 pub fn main() {
@@ -73,19 +34,29 @@ pub fn main() {
         }
     }
 
-    let mut balls = vec![vec![0u128; m]; n];
-    balls[s.0][s.1] = 1<<(n+2);
-    if !dfs(&mut balls, &a, s.0, s.1, n, m) {
-        println!("-1");
-        return
-    }
-
-    let (mut ans, mut ansi) = (0, 0);
-    for i in 0..m {
-        if balls[n-1][i] > ans {
-            ans = balls[n-1][i];
-            ansi = i;
+    let mut dp = vec![vec![0u128; m]; n];
+    dp[s.0][s.1] = 1<<n;
+    for i in 0..n-1 {
+        for j in 0..m {
+            if dp[i][j] == 0 { continue; }
+            if a[i+1][j] == 0 { dp[i+1][j] += dp[i][j]; }
+            else {
+                if a[i][j-1] == 0 && a[i+1][j-1] == 0 {
+                    dp[i+1][j-1] += dp[i][j] >> 1;
+                }
+                if a[i][j+1] == 0 && a[i+1][j+1] == 0 {
+                    dp[i+1][j+1] += dp[i][j] >> 1;
+                }
+            }
         }
     }
-    println!("{}", ansi);
+
+    let (mut a, mut i) = (0u128, 0);
+    for j in 0..m {
+        if dp[n-1][j] > a {
+            a = dp[n-1][j];
+            i = j;
+        }
+    }
+    println!("{}", if a == 0 { -1 } else { i as i32 });
 }
