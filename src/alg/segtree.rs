@@ -44,7 +44,7 @@ struct MaxSegTree<T> {
     v: Vec<T>,
 }
 impl<T> MaxSegTree<T> where
-    T: PartialOrd + Default + Copy {
+    T: Ord + Default + Copy {
     fn new(n: usize) -> Self {
         let mut m = 1;
         while m < n { m <<= 1; }
@@ -55,7 +55,7 @@ impl<T> MaxSegTree<T> where
             self.v[self.n+i] = a[i];
         }
         for i in (1..self.n).rev() {
-            self.v[i] = self.v[i<<1] + self.v[(i<<1)+1];
+            self.v[i] = self.v[i<<1].max(self.v[(i<<1)+1]);
         }
     }
     fn update(&mut self, mut i: usize, x: T) {
@@ -66,7 +66,7 @@ impl<T> MaxSegTree<T> where
             self.v[i] = self.v[i<<1].max(self.v[(i<<1)+1]);
         }
     }
-    fn query(&mut self, mut l: usize, mut r: usize) -> T {
+    fn query(&self, mut l: usize, mut r: usize) -> T {
         l += self.n; r += self.n;
         let mut ans: Option<T> = None;
         while l <= r {
@@ -92,7 +92,7 @@ struct MinSegTree<T> {
     v: Vec<T>,
 }
 impl<T> MinSegTree<T> where
-    T: PartialOrd + Default + Copy {
+    T: Ord + Default + Copy {
     fn new(n: usize) -> Self {
         let mut m = 1;
         while m < n { m <<= 1; }
@@ -103,7 +103,7 @@ impl<T> MinSegTree<T> where
             self.v[self.n+i] = a[i];
         }
         for i in (1..self.n).rev() {
-            self.v[i] = self.v[i<<1] + self.v[(i<<1)+1];
+            self.v[i] = self.v[i<<1].min(self.v[(i<<1)+1]);
         }
     }
     fn update(&mut self, mut i: usize, x: T) {
@@ -114,7 +114,7 @@ impl<T> MinSegTree<T> where
             self.v[i] = self.v[i<<1].min(self.v[(i<<1)+1]);
         }
     }
-    fn query(&mut self, mut l: usize, mut r: usize) -> T {
+    fn query(&self, mut l: usize, mut r: usize) -> T {
         l += self.n; r += self.n;
         let mut ans: Option<T> = None;
         while l <= r {

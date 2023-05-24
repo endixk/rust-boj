@@ -35,8 +35,8 @@ then
 fi
 
 # modify main.rs
-OD=$(grep use "$MRS" | cut -d: -f3)
-OQ=$(grep use "$MRS" | cut -d: -f5 | cut -d\; -f1)
+OD=$(grep -v "#" "$MRS" | grep use | cut -d: -f3)
+OQ=$(grep -v "#" "$MRS" | grep use | cut -d: -f5 | cut -d\; -f1)
 sed "s/$OD/d$SID/g" "$MRS" | sed "s/$OQ/q$BOJ/g" > "$DIR"/.main.rs
 cp "$DIR"/.main.rs "$MRS"
 rm "$DIR"/.main.rs

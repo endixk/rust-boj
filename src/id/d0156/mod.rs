@@ -11,3 +11,4 @@ pub mod q15663;
 pub mod q15664;
 pub mod q15665;
 pub mod q15666;
+pub mod q15686;
