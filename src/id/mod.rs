@@ -38,6 +38,7 @@ pub mod d0096;
 pub mod d0099;
 pub mod d0100;
 pub mod d0102;
+pub mod d0105;
 pub mod d0107;
 pub mod d0108;
 pub mod d0109;
