@@ -1,0 +1,33 @@
+#!/bin/bash
+# ./del [BOJ_ID]
+
+if test "$#" -ne 1
+then
+  echo "USAGE: ./del [BOJ_ID]"
+  exit 1
+fi
+BOJ=$1
+
+# locate files
+TMP=$(dirname "$0")/..
+DIR=$(cd "$TMP" || exit 1; pwd)
+SID=$(printf "%04d" "$(echo "$BOJ / 100" | bc)")
+
+QRS=$DIR/src/id/d$SID/q$BOJ.rs
+MRS=$DIR/src/id/d$SID/mod.rs
+MOD=$DIR/src/id/mod.rs
+
+# delete files
+rm -f "$QRS"
+cp "$MRS" "$DIR"/.mod.rs
+sed "/pub mod q$BOJ;/d" "$DIR"/.mod.rs > "$MRS"
+rm "$DIR"/.mod.rs
+
+# delete mod if empty
+if [ ! -s "$MRS" ]
+then
+  rm -rf "$DIR"/src/id/d"$SID"
+  cp "$MOD" "$DIR"/.mod.rs
+  sed "/pub mod d$SID;/d" "$DIR"/.mod.rs > "$MOD"
+  rm "$DIR"/.mod.rs
+fi
