@@ -39,3 +39,4 @@ pub mod q1277;
 pub mod q1278;
 pub mod q1279;
 pub mod q1280;
+pub mod q1294;
