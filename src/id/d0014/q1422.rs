@@ -1,7 +1,7 @@
-// BOJ 21740 [Math Game]
+// BOJ 1422 [God of Numbers]
 // Supported by GitHub Copilot
 
-use std::io::{self, Read};
+use std::io::{self, Read, Write};
 
 fn read<T>(si: &mut T) -> String where T: Read {
     let mut s = String::new();
@@ -15,26 +15,15 @@ fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
     it.next().unwrap().parse().unwrap()
 }
 
-fn rev(c: char) -> char {
-    match c {
-        '6' => '9',
-        '9' => '6',
-        _ => c,
-    }
-}
-fn srev(s: &String) -> String {
-    s.chars().rev().map(rev).collect()
-}
-
 pub fn main() {
     let mut si = io::BufReader::new(io::stdin().lock());
+    let mut so = io::BufWriter::new(io::stdout().lock());
     let s = read(&mut si);
     let mut it = s.split_ascii_whitespace();
 
-    let n = next::<usize>(&mut it);
+    let (n, k) = (next::<usize>(&mut it), next::<usize>(&mut it));
     let mut v = (0..n).map(|_| {
         let s = next::<String>(&mut it);
-        let s = srev(&s);
         (s.parse::<u64>().unwrap(), s.len() as u32)
     }).collect::<Vec<_>>();
     v.sort_unstable_by(|&(a, al), &(b, bl)| {
@@ -46,10 +35,11 @@ pub fn main() {
         if l > maxl { max = n; maxl = l; maxi = i; }
         else if l == maxl && n > max { max = n; maxi = i; }
     }
-    v[maxi].0 = max * 10u64.pow(maxl) + max;
-    v[maxi].1 *= 2;
 
-    let mut ans = String::new();
-    for (n, l) in v { ans += &format!("{:0>1$}", n, l as usize); }
-    println!("{}", srev(&ans));
+    for (i, &(x, _)) in v.iter().enumerate() {
+        write!(so, "{}", x).unwrap();
+        if i == maxi {
+            for _ in 0..k-n { write!(so, "{}", max).unwrap(); }
+        }
+    }
 }
