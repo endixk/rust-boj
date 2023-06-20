@@ -1,3 +1,18 @@
+use std::io;
+use std::io::prelude::*;
+
+fn read<T>(si: &mut T) -> String where T: Read {
+    let mut s = String::new();
+    si.read_to_string(&mut s).unwrap();
+    s
+}
+
+fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
+    T: std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Debug {
+    it.next().unwrap().parse().unwrap()
+}
+
 #[derive(Eq, PartialEq, Clone, Copy, Debug)]
 struct Point {
     x: i32,
@@ -59,34 +74,14 @@ fn graham(mut points: Vec<Point>) -> Vec<Point> {
     hull
 }
 
-fn cross(x1: &Point, x2: &Point, y1: &Point, y2: &Point) -> i64 {
-    (x2.x - x1.x) as i64 * (y2.y - y1.y) as i64 - (x2.y - x1.y) as i64 * (y2.x - y1.x) as i64
-}
-fn calipers(hull: Vec<Point>) -> (Point, Point) {
-    // find the leftmost and rightmost points
-    let (mut l, mut r) = (0, 0);
-    hull.iter().enumerate().skip(1).for_each(|(i, p)| {
-        if p.x < hull[l].x { l = i; }
-        if p.x > hull[r].x { r = i; }
-    });
+pub fn main() {
+    let mut si = io::BufReader::new(io::stdin().lock());
+    let s = read(&mut si);
+    let mut it = s.split_ascii_whitespace();
 
-    // find the farthest distance
-    let mut d = dist(&hull[l], &hull[r]);
-    let mut ret = (hull[l].clone(), hull[r].clone());
-    for _ in 1..hull.len() {
-        // rotate
-        if cross(&hull[l], &hull[(l + 1) % hull.len()], &hull[r], &hull[(r + 1) % hull.len()]) < 0 {
-            l = (l + 1) % hull.len();
-        } else {
-            r = (r + 1) % hull.len();
-        }
-        // update
-        let t = dist(&hull[l], &hull[r]);
-        if t > d {
-            d = t;
-            ret = (hull[l].clone(), hull[r].clone());
-        }
-    }
-
-    ret
+    let n = next::<usize>(&mut it);
+    let points = (0..n).map(|_| {
+        Point { x: next(&mut it), y: next(&mut it) }
+    }).collect::<Vec<_>>();
+    println!("{}", graham(points).len());
 }
