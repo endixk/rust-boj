@@ -16,6 +16,11 @@ SID=$(printf "%04d" "$(echo "$BOJ / 100" | bc)")
 QRS=$DIR/src/id/d$SID/q$BOJ.rs
 MRS=$DIR/src/id/d$SID/mod.rs
 MOD=$DIR/src/id/mod.rs
+if test ! -f "$QRS"
+then
+  echo "ERROR: $QRS does not exist"
+  exit 1
+fi
 
 # delete files
 rm -f "$QRS"
