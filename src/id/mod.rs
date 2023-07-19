@@ -106,6 +106,7 @@ pub mod d0173;
 pub mod d0174;
 pub mod d0176;
 pub mod d0181;
+pub mod d0182;
 pub mod d0183;
 pub mod d0188;
 pub mod d0195;
