@@ -19,12 +19,22 @@ impl FenwickTree {
     }
     fn add(&mut self, mut i: usize, v: i64) {
         while i <= self.n {
-            self.ft[i as usize] += v;
+            self.ft[i] += v;
             i += i & (!i + 1);
         }
     }
-    fn update(&mut self, l: usize, r: usize, v: i64) {
+
+    fn point_update(&mut self, i: usize, x: i64) {
+        self.add(i, x);
+    }
+    fn range_query(&self, l: usize, r: usize) -> i64 {
+        self.sum(r) - self.sum(l-1)
+    }
+    fn range_update(&mut self, l: usize, r: usize, v: i64) {
         self.add(l, v);
         self.add(r+1, -v);
+    }
+    fn point_query(&self, i: usize) -> i64 {
+        self.sum(i)
     }
 }
