@@ -1,8 +1,8 @@
 #![allow(dead_code)]
 
 mod id;
-use id::d0129::q12918;
+use id::d0276::q27651;
 
 fn main() {
-    q12918::main();
+    q27651::main();
 }
