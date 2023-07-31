@@ -41,8 +41,12 @@ pub fn main() {
         next::<i32>(&mut it), next::<i32>(&mut it), next::<i32>(&mut it),
     );
 
-    if x < s || y < s {
+    if x < s {
         writeln!(so, "gg").ok();
+        return;
+    }
+    if y < s {
+        writeln!(so, "1").ok();
         return;
     }
 
