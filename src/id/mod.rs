@@ -128,6 +128,7 @@ pub mod d0217;
 pub mod d0233;
 pub mod d0238;
 pub mod d0239;
+pub mod d0240;
 pub mod d0245;
 pub mod d0250;
 pub mod d0260;
