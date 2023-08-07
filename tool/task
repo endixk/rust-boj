@@ -11,7 +11,7 @@ BOJ=$1
 # locate files
 TMP=$(dirname "$0")/..
 DIR=$(cd "$TMP" || exit 1; pwd)
-MRS=$DIR/src/main.rs
+MRS=$DIR/tool/main.rs
 SID=$(printf "%04d" "$(echo "$BOJ / 100" | bc)")
 RST=$DIR/src/id/d$SID/q$BOJ.rs
 
@@ -35,8 +35,4 @@ then
 fi
 
 # modify main.rs
-OD=$(grep -v "#" "$MRS" | grep use | cut -d: -f3)
-OQ=$(grep -v "#" "$MRS" | grep use | cut -d: -f5 | cut -d\; -f1)
-sed "s/$OD/d$SID/g" "$MRS" | sed "s/$OQ/q$BOJ/g" > "$DIR"/.main.rs
-cp "$DIR"/.main.rs "$MRS"
-rm "$DIR"/.main.rs
+sed "s/d0010/d$SID/g" "$MRS" | sed "s/q1000/q$BOJ/g" > "$DIR"/src/main.rs

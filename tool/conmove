@@ -1,0 +1,31 @@
+#!/bin/bash
+# ./conmove [ID] [BOJ_ID]
+
+if [ "$#" -ne 2 ]
+then
+  echo "USAGE: ./conmove [ID] [BOJ_ID]"
+  exit 1
+fi
+ID=$1
+BOJ=$2
+SID=$(printf "%04d" "$(echo "$BOJ / 100" | bc)")
+
+# locate files
+TMP=$(dirname "$0")/..
+DIR=$(cd "$TMP" || exit 1; pwd)
+QRS=$DIR/src/contest/q$ID.rs
+if test ! -f "$QRS"
+then
+  echo "ERROR: $QRS does not exist"
+  exit 1
+fi
+
+# generate BOJ .rs
+$DIR/tool/task "$BOJ"
+cp "$QRS" "$DIR"/src/id/d"$SID"/q"$BOJ".rs
+
+# remove contest .rs
+rm "$QRS"
+cp "$DIR"/src/contest/mod.rs "$DIR"/.mod.rs
+sed "/pub mod q$ID;/d" "$DIR"/.mod.rs > "$DIR"/src/contest/mod.rs
+rm "$DIR"/.mod.rs
