@@ -133,3 +133,33 @@ impl<T> MinSegTree<T> where
         ans.unwrap()
     }
 }
+
+// Count segment tree
+struct CountSegTree {
+    n: usize,
+    c: Vec<i32>,
+    v: Vec<usize>,
+}
+impl CountSegTree {
+    fn new(n: usize) -> Self {
+        let mut m = 1;
+        while m < n { m <<= 1; }
+        Self { n: m, c: vec![0; m<<1], v: vec![0; m<<1] }
+    }
+    fn update(&mut self, i: usize, s: usize, e: usize, l: usize, r: usize, x: i32) {
+        if r < s || e < l { return; }
+        if l <= s && e <= r {
+            self.c[i] += x;
+        } else {
+            let m = (s + e) >> 1;
+            self.update(i<<1, s, m, l, r, x);
+            self.update((i<<1)+1, m+1, e, l, r, x);
+        }
+        if self.c[i] > 0 {
+            self.v[i] = e - s + 1;
+        } else {
+            if s == e { self.v[i] = 0; }
+            else { self.v[i] = self.v[i<<1] + self.v[(i<<1)+1]; }
+        }
+    }
+}
