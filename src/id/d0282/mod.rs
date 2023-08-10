@@ -5,5 +5,7 @@ pub mod q28240;
 pub mod q28242;
 pub mod q28245;
 pub mod q28250;
+pub mod q28251;
+pub mod q28252;
 pub mod q28255;
 pub mod q28256;
