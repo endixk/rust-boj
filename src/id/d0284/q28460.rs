@@ -349,11 +349,12 @@ pub fn main() {
                 return;
             }
             if i == 0 && game.rule > 0 {
+                let color = (game.rule - 1) as usize;
                 let mut cnt = 0;
                 for i in 0..13 {
-                    if players[pres].deck[13 * game.rule as usize + i] { cnt += 1; }
+                    if players[pres].deck[13 * color + i] { cnt += 1; }
                 }
-                if cnt < 10 && first as u8 / 13 + 1 == game.rule {
+                if cnt < 10 && first / 13 == color {
                     println!("Rule Violation");
                     return;
                 }
