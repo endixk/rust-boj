@@ -1,3 +1,6 @@
+// BOJ 17633 [Sum of Squares]
+// Supported by GitHub Copilot
+
 fn mul(a: u64, b: u64, m: u64) -> u64 {
     (a as u128 * b as u128 % m as u128) as u64
 }
@@ -79,4 +82,45 @@ fn pollard_rho(n: u64, rng: &mut Random) {
     }
     pollard_rho(d, rng);
     pollard_rho(n / d, rng);
+}
+
+fn count(v: &[u64]) -> Vec<(u64, u8)> {
+    let mut ret = Vec::new();
+    let mut cnt = 1;
+    for i in 1..v.len() {
+        if v[i] == v[i - 1] { cnt += 1; }
+        else {
+            ret.push((v[i - 1], cnt));
+            cnt = 1;
+        }
+    }
+    ret.push((v[v.len() - 1], cnt));
+    ret
+}
+pub fn main() {
+    let n = std::io::stdin().lines().next().unwrap().unwrap().parse::<u64>().unwrap();
+    if n == ((n as f64).sqrt().floor() as u64).pow(2) {
+        println!("1");
+        return;
+    }
+
+    let mut rng = Random::new();
+    pollard_rho(n, &mut rng);
+    let mut factors = unsafe { FACTORS.clone() };
+    factors.sort_unstable();
+    let factors = count(&factors);
+
+    let mut flag = true;
+    for (f, c) in factors {
+        if f % 4 == 3 && c % 2 != 0 {
+            flag = false;
+            break;
+        }
+    }
+    if flag { println!("2"); return; }
+
+    let mut n = n;
+    while n % 4 == 0 { n /= 4; }
+    if n % 8 == 7 { println!("4"); }
+    else { println!("3"); }
 }
