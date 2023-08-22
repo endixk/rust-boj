@@ -151,3 +151,5 @@ pub mod d0287;
 pub mod d0288;
 pub mod d0289;
 pub mod d0290;
+pub mod d0291;
+pub mod d0292;
