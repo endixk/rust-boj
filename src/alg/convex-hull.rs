@@ -3,6 +3,7 @@ struct Point {
     x: i32,
     y: i32,
 }
+static mut ORI: Point = Point { x: 0, y: 0 };
 impl Ord for Point {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         unsafe {
@@ -16,7 +17,6 @@ impl PartialOrd for Point {
         Some(self.cmp(other))
     }
 }
-
 fn ccw(a: &Point, b: &Point, c: &Point) -> i8 {
     let t = (b.x - a.x) as i64 * (c.y - a.y) as i64 - (b.y - a.y) as i64 * (c.x - a.x) as i64;
     if t > 0 { 1 } else if t < 0 { -1 } else { 0 }
@@ -25,7 +25,6 @@ fn dist(a: &Point, b: &Point) -> i64 {
     ((a.x - b.x) as i64).pow(2) + ((a.y - b.y) as i64).pow(2)
 }
 
-static mut ORI: Point = Point { x: 0, y: 0 };
 fn graham(mut points: Vec<Point>) -> Vec<Point> {
     // find the lowest point
     let mut loc = 0;

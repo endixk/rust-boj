@@ -10,14 +10,6 @@ impl<T> SegTree<T> where
         while m < n { m <<= 1; }
         Self { n: m, v: vec![T::default(); m<<1] }
     }
-    fn build(&mut self, a: &[T]) {
-        for i in 0..a.len() {
-            self.v[self.n+i] = a[i];
-        }
-        for i in (1..self.n).rev() {
-            self.v[i] = self.v[i<<1] + self.v[(i<<1)+1];
-        }
-    }
     fn update(&mut self, mut i: usize, x: T) {
         i += self.n;
         self.v[i] = x;
@@ -49,14 +41,6 @@ impl<T> MaxSegTree<T> where
         let mut m = 1;
         while m < n { m <<= 1; }
         Self { n: m, v: vec![T::default(); m<<1] }
-    }
-    fn build(&mut self, a: &[T]) {
-        for i in 0..a.len() {
-            self.v[self.n+i] = a[i];
-        }
-        for i in (1..self.n).rev() {
-            self.v[i] = self.v[i<<1].max(self.v[(i<<1)+1]);
-        }
     }
     fn update(&mut self, mut i: usize, x: T) {
         i += self.n;
@@ -97,14 +81,6 @@ impl<T> MinSegTree<T> where
         let mut m = 1;
         while m < n { m <<= 1; }
         Self { n: m, v: vec![T::default(); m<<1] }
-    }
-    fn build(&mut self, a: &[T]) {
-        for i in 0..a.len() {
-            self.v[self.n+i] = a[i];
-        }
-        for i in (1..self.n).rev() {
-            self.v[i] = self.v[i<<1].min(self.v[(i<<1)+1]);
-        }
     }
     fn update(&mut self, mut i: usize, x: T) {
         i += self.n;

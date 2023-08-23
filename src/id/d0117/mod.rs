@@ -6,4 +6,5 @@ pub mod q11725;
 pub mod q11726;
 pub mod q11727;
 pub mod q11728;
+pub mod q11778;
 pub mod q11779;
