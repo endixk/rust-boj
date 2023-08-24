@@ -1,6 +1,5 @@
-// BOJ 28476 [Butterflies]
+// BOJ 28476 [Butterflies 2]
 // Supported by GitHub Copilot
-// TODO FAILED
 
 use std::io::{self, Read};
 fn read<T>(si: &mut T) -> String where T: Read {
@@ -30,17 +29,22 @@ pub fn main() {
     let mut it = s.split_ascii_whitespace();
 
     let n = next::<usize>(&mut it);
-    let mut points = (0..n).map(|_| { Point { x: next(&mut it), y: next(&mut it) } }).collect::<Vec<_>>();
-    points.sort_unstable_by(|a, b| ccw(&Point { x: 0, y: 0 }, a, b).cmp(&0));
+    let points = (0..n).map(|_| { Point { x: next(&mut it), y: next(&mut it) } }).collect::<Vec<_>>();
 
     let mut k = 0;
     for i in 0..n {
-        let mut p = points.iter().enumerate().filter(|&(j, _)| j != i).map(|(_, &p)| p).collect::<Vec<_>>();
+        let mut p = points.iter().enumerate()
+            .filter(|&(j, p)| i != j && p.x <= points[i].x)
+            .map(|(_, p)| p).collect::<Vec<_>>();
+        let mut q = points.iter().filter(|&p| p.x > points[i].x).collect::<Vec<_>>();
         p.sort_unstable_by(|a, b| ccw(&points[i], a, b).cmp(&0));
+        q.sort_unstable_by(|a, b| ccw(&points[i], a, b).cmp(&0));
+        p.extend(q);
         p.extend(p.clone());
 
-        let mut c = 1;
+        let mut c = 0;
         for j in 0..n-1 {
+            if c == j { c += 1; }
             while ccw(&points[i], &p[j], &p[c]) < 0 {
                 c += 1;
             }
