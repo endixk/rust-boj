@@ -1,7 +1,12 @@
-target
-.idea
+target/
+.idea/
 Cargo.lock
 
 .DS_Store
 *.swp
 
+tool/
+main.rs
+mod.rs
+lib.rs
+Cargo.toml
