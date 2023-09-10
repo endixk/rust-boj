@@ -20,7 +20,7 @@ fn sect(p: &Segment, q: &Segment) -> f64 {
     (q.b - p.b) as f64 / (p.a - q.a) as f64
 }
 fn find(sv: &[f64], x: f64) -> usize {
-    sv.binary_search_by(|&y| y.partial_cmp(&x).unwrap()).unwrap_err() - 1
+    sv.binary_search_by(|&y| y.partial_cmp(&x).unwrap()).unwrap_or_else(|x| x-1)
 }
 pub fn main() {
     let mut si = io::BufReader::new(io::stdin().lock());
