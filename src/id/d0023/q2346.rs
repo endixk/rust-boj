@@ -1,3 +1,6 @@
+// BOJ 2346 [Popping Balloons]
+// Supported by GitHub Copilot
+
 use std::io::{self, Read, Write};
 fn read<T>(si: &mut T) -> String where T: Read {
     let mut s = String::new();
@@ -16,17 +19,20 @@ pub fn main() {
     let s = read(&mut si);
     let mut it = s.split_ascii_whitespace();
 
-    let (n, m) = (next::<usize>(&mut it), next::<usize>(&mut it));
-    let a = (0..n).map(|_| next::<i32>(&mut it)).collect::<Vec<_>>();
-    let mut pm = vec![0; n];
-    pm[n-1] = a[n-1];
-    for i in 1..=m {
-        pm[n-i-1] = pm[n-i].max(a[n-i-1]);
+    let n = next::<usize>(&mut it);
+    let mut v = Vec::new();
+    for i in 0..n {
+        let c = next::<i32>(&mut it);
+        v.push((c, i+1, (i+n-1)%n, (i+1)%n));
     }
 
-    let mut ans = -9999999;
-    for i in 0..=m {
-        if ans < pm[n-m+i-1] - a[i] { ans = pm[n-m+i-1] - a[i]; }
+    let mut i = 0;
+    for _ in 0..n {
+        write!(so, "{} ", v[i].1).unwrap();
+        let (l, r) = (v[i].2, v[i].3);
+        v[l].3 = r; v[r].2 = l;
+        let c = v[i].0;
+        if c > 0 { for _ in 0..c { i = v[i].3; } }
+        else { for _ in 0..-c { i = v[i].2; } }
     }
-    writeln!(so, "{}", ans).ok();
 }

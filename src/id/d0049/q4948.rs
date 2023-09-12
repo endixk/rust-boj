@@ -1,3 +1,6 @@
+// BOJ 4948 [Bertrand's Postulate]
+// Supported by GitHub Copilot
+
 use std::io::{self, Read, Write};
 fn read<T>(si: &mut T) -> String where T: Read {
     let mut s = String::new();
@@ -10,23 +13,28 @@ fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
     it.next().unwrap().parse().unwrap()
 }
 
+fn sieve(n: usize) -> Vec<bool> {
+    let mut p = vec![true; n + 1];
+    p[0] = false; p[1] = false;
+    for i in 2..=n {
+        if p[i] {
+            for j in (i * i..=n).step_by(i) {
+                p[j] = false;
+            }
+        }
+    }
+    p
+}
 pub fn main() {
     let mut si = io::BufReader::new(io::stdin().lock());
     let mut so = io::BufWriter::new(io::stdout().lock());
     let s = read(&mut si);
     let mut it = s.split_ascii_whitespace();
 
-    let (n, m) = (next::<usize>(&mut it), next::<usize>(&mut it));
-    let a = (0..n).map(|_| next::<i32>(&mut it)).collect::<Vec<_>>();
-    let mut pm = vec![0; n];
-    pm[n-1] = a[n-1];
-    for i in 1..=m {
-        pm[n-i-1] = pm[n-i].max(a[n-i-1]);
+    let p = sieve(250000);
+    loop {
+        let n = next::<usize>(&mut it);
+        if n == 0 { break; }
+        writeln!(so, "{}", p[n+1..=2*n].iter().filter(|&x| *x).count()).unwrap();
     }
-
-    let mut ans = -9999999;
-    for i in 0..=m {
-        if ans < pm[n-m+i-1] - a[i] { ans = pm[n-m+i-1] - a[i]; }
-    }
-    writeln!(so, "{}", ans).ok();
 }

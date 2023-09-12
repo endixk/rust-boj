@@ -1,3 +1,6 @@
+// BOJ 24511 [queuestack]
+// Supported by GitHub Copilot
+
 use std::io::{self, Read, Write};
 fn read<T>(si: &mut T) -> String where T: Read {
     let mut s = String::new();
@@ -16,17 +19,15 @@ pub fn main() {
     let s = read(&mut si);
     let mut it = s.split_ascii_whitespace();
 
-    let (n, m) = (next::<usize>(&mut it), next::<usize>(&mut it));
-    let a = (0..n).map(|_| next::<i32>(&mut it)).collect::<Vec<_>>();
-    let mut pm = vec![0; n];
-    pm[n-1] = a[n-1];
-    for i in 1..=m {
-        pm[n-i-1] = pm[n-i].max(a[n-i-1]);
+    let n = next::<usize>(&mut it);
+    let a = (0..n).map(|_| next::<i32>(&mut it) == 0).collect::<Vec<_>>();
+    let mut q = std::collections::VecDeque::<i32>::new();
+    for i in 0..n {
+        let c = next(&mut it);
+        if a[i] { q.push_front(c); }
     }
-
-    let mut ans = -9999999;
-    for i in 0..=m {
-        if ans < pm[n-m+i-1] - a[i] { ans = pm[n-m+i-1] - a[i]; }
+    for _ in 0..next(&mut it) {
+        q.push_back(next(&mut it));
+        write!(so, "{} ", q.pop_front().unwrap()).ok();
     }
-    writeln!(so, "{}", ans).ok();
 }
