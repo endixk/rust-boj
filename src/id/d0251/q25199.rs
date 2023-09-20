@@ -13,16 +13,7 @@ fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
     it.next().unwrap().parse().unwrap()
 }
 
-const MOD: i64 = 1_000_000_007;
-fn go(dp: &mut Vec<Vec<i64>>, i: usize, j: usize, x: usize, k: usize) -> i64 {
-    if i == 0 { return 1; }
-    if j == 0 { return 1; }
-    if dp[i][j] != -1 { return dp[i][j]; }
-    let c = if i < x { k } else { k - 1 };
-    let ret = (go(dp, i, j-1, x, k) + go(dp, i-1, j, x, k) - if j > c { go(dp, i-1, j-c-1, x, k) } else { 0 } + MOD) % MOD;
-    dp[i][j] = ret;
-    ret
-}
+const MOD: i32 = 1_000_000_007;
 pub fn main() {
     let mut si = io::BufReader::new(io::stdin().lock());
     let mut so = io::BufWriter::new(io::stdout().lock());
@@ -47,5 +38,13 @@ pub fn main() {
     else if ki ==k && xi > x { x = xi; }
 
     let mut dp = vec![vec![-1; n + 1]; m + 1];
-    writeln!(so, "{}", (go(&mut dp, m, n, x, k) - go(&mut dp, m, n-1, x, k) + MOD) % MOD).unwrap();
+    for j in 0..=n { dp[0][j] = 1; }
+    for i in 1..=m { dp[i][0] = 1; }
+    for i in 1..=m {
+        let c = if i < x { k } else { k - 1 };
+        for j in 1..=n {
+            dp[i][j] = ((dp[i][j-1] + dp[i-1][j]) % MOD - if j > c { dp[i-1][j-c-1] } else { 0 } + MOD) % MOD;
+        }
+    }
+    writeln!(so, "{}", (dp[m][n] - dp[m][n-1] + MOD) % MOD).ok();
 }
