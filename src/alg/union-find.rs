@@ -23,6 +23,25 @@ fn union(root: &mut Vec<usize>, rank: &mut Vec<usize>, x: usize, y: usize) {
     }
 }
 
+fn union_sz(root: &mut Vec<usize>,
+              rank: &mut Vec<usize>,
+              size: &mut Vec<usize>, x: usize, y: usize) {
+    let x = find(root, x);
+    let y = find(root, y);
+    if x != y {
+        if rank[x] < rank[y] {
+            root[x] = y;
+            size[y] += size[x];
+        } else {
+            root[y] = x;
+            size[x] += size[y];
+            if rank[x] == rank[y] {
+                rank[x] += 1;
+            }
+        }
+    }
+}
+
 fn union_size(root: &mut Vec<usize>,
               rank: &mut Vec<usize>,
               size: &mut Vec<usize>, x: usize, y: usize) -> usize {
