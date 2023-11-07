@@ -1,33 +1,16 @@
-// Sum segment tree
-struct SegTree<T> {
-    n: usize,
-    v: Vec<T>,
+// BOJ 9345 [DVDs]
+// Supported by GitHub Copilot
+
+use std::io::{self, Read, Write};
+fn read<T>(si: &mut T) -> String where T: Read {
+    let mut s = String::new();
+    si.read_to_string(&mut s).unwrap();
+    s
 }
-impl<T> SegTree<T> where
-    T: std::ops::AddAssign + std::ops::Add<Output=T> + Default + Copy {
-    fn new(n: usize) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
-        Self { n: m, v: vec![T::default(); m<<1] }
-    }
-    fn update(&mut self, mut i: usize, x: T) {
-        i += self.n;
-        self.v[i] = x;
-        while i > 1 {
-            i >>= 1;
-            self.v[i] = self.v[i<<1] + self.v[i<<1|1];
-        }
-    }
-    fn query(&mut self, mut l: usize, mut r: usize) -> T {
-        l += self.n; r += self.n;
-        let mut ans = T::default();
-        while l <= r {
-            if l & 1 == 1 { ans += self.v[l]; l += 1; }
-            if r & 1 == 0 { ans += self.v[r]; r -= 1; }
-            l >>= 1; r >>= 1;
-        }
-        ans
-    }
+fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
+    T: std::str::FromStr,
+    <T as std::str::FromStr>::Err: std::fmt::Debug {
+    it.next().unwrap().parse().unwrap()
 }
 
 // Max segment tree
@@ -47,7 +30,7 @@ impl<T> MaxSegTree<T> where
         self.v[i] = x;
         while i > 1 {
             i >>= 1;
-            self.v[i] = self.v[i<<1].max(self.v[i<<1|1]);
+            self.v[i] = self.v[i<<1].max(self.v[(i<<1)+1]);
         }
     }
     fn query(&self, mut l: usize, mut r: usize) -> T {
@@ -87,7 +70,7 @@ impl<T> MinSegTree<T> where
         self.v[i] = x;
         while i > 1 {
             i >>= 1;
-            self.v[i] = self.v[i<<1].min(self.v[i<<1|1]);
+            self.v[i] = self.v[i<<1].min(self.v[(i<<1)+1]);
         }
     }
     fn query(&self, mut l: usize, mut r: usize) -> T {
@@ -110,32 +93,42 @@ impl<T> MinSegTree<T> where
     }
 }
 
-// Count segment tree
-struct CountSegTree {
-    n: usize,
-    c: Vec<i32>,
-    v: Vec<usize>,
-}
-impl CountSegTree {
-    fn new(n: usize) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
-        Self { n: m, c: vec![0; m<<1], v: vec![0; m<<1] }
-    }
-    fn update(&mut self, i: usize, s: usize, e: usize, l: usize, r: usize, x: i32) {
-        if r < s || e < l { return; }
-        if l <= s && e <= r {
-            self.c[i] += x;
-        } else {
-            let m = (s + e) >> 1;
-            self.update(i<<1, s, m, l, r, x);
-            self.update((i<<1)+1, m+1, e, l, r, x);
+pub fn main() -> Result<(), Box<dyn std::error::Error>> {
+    let mut si = io::BufReader::new(io::stdin().lock());
+    let mut so = io::BufWriter::new(io::stdout().lock());
+    let s = read(&mut si);
+    let mut it = s.split_ascii_whitespace();
+
+    for _ in 0..next(&mut it) {
+        let (n, k) = (next::<usize>(&mut it), next::<usize>(&mut it));
+        let mut arr = (0..=n).collect::<Vec<usize>>();
+        let mut xseg = MaxSegTree::new(n+1);
+        let mut nseg = MinSegTree::new(n+1);
+        for i in 1..=n {
+            xseg.update(i, i);
+            nseg.update(i, i);
         }
-        if self.c[i] > 0 {
-            self.v[i] = e - s + 1;
-        } else {
-            if s == e { self.v[i] = 0; }
-            else { self.v[i] = self.v[i<<1] + self.v[i<<1|1]; }
+
+        for _ in 0..k {
+            let (q, a, b) = (next::<u8>(&mut it), next::<usize>(&mut it)+1, next::<usize>(&mut it)+1);
+            match q {
+                0 => {
+                    xseg.update(a, arr[b]);
+                    xseg.update(b, arr[a]);
+                    nseg.update(a, arr[b]);
+                    nseg.update(b, arr[a]);
+                    arr.swap(a, b);
+                }
+                _ => {
+                    if nseg.query(a, b) == a && xseg.query(a, b) == b {
+                        writeln!(so, "YES")?;
+                    } else {
+                        writeln!(so, "NO")?;
+                    }
+                }
+            }
         }
     }
+
+    Ok(())
 }
