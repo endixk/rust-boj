@@ -1,8 +1,4 @@
-#[derive(Eq, PartialEq, Clone, Copy, Debug)]
-struct Point {
-    x: i32,
-    y: i32,
-}
+#[derive(Eq, PartialEq, Clone, Copy, Debug)] struct Point { x: i32, y: i32 }
 #[inline] fn ccw(a: &Point, b: &Point, c: &Point) -> i8 {
     let t = (b.x - a.x) as i64 * (c.y - a.y) as i64 - (b.y - a.y) as i64 * (c.x - a.x) as i64;
     if t > 0 { 1 } else if t < 0 { -1 } else { 0 }
