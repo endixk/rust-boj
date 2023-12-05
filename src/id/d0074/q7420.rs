@@ -1,10 +1,13 @@
+// BOJ 7420 [Walls]
+// Supported by GitHub Copilot
+
 #[derive(Eq, PartialEq, Clone, Copy, Debug)] struct Point { x: i32, y: i32 }
 static mut ORI: Point = Point { x: 0, y: 0 };
 impl Ord for Point {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         unsafe {
             ccw(&ORI, other, self).cmp(&0)
-                .then(dsq(&ORI, self).cmp(&dsq(&ORI, other)))
+                .then(dist(&ORI, self).cmp(&dist(&ORI, other)))
         }
     }
 }
@@ -17,7 +20,7 @@ fn ccw(a: &Point, b: &Point, c: &Point) -> i8 {
     let t = (b.x - a.x) as i64 * (c.y - a.y) as i64 - (b.y - a.y) as i64 * (c.x - a.x) as i64;
     if t > 0 { 1 } else if t < 0 { -1 } else { 0 }
 }
-fn dsq(a: &Point, b: &Point) -> i64 {
+fn dist(a: &Point, b: &Point) -> i64 {
     ((a.x - b.x) as i64).pow(2) + ((a.y - b.y) as i64).pow(2)
 }
 
@@ -54,34 +57,37 @@ fn graham(mut points: Vec<Point>) -> Vec<Point> {
     hull
 }
 
-fn cross(x1: &Point, x2: &Point, y1: &Point, y2: &Point) -> i64 {
-    (x2.x - x1.x) as i64 * (y2.y - y1.y) as i64 - (x2.y - x1.y) as i64 * (y2.x - y1.x) as i64
-}
-fn calipers(hull: Vec<Point>) -> (Point, Point) {
-    // find the leftmost and rightmost points
-    let (mut l, mut r) = (0, 0);
-    hull.iter().enumerate().skip(1).for_each(|(i, p)| {
-        if p.x < hull[l].x { l = i; }
-        if p.x > hull[r].x { r = i; }
-    });
-
-    // find the farthest distance
-    let mut d = dist(&hull[l], &hull[r]);
-    let mut ret = (hull[l].clone(), hull[r].clone());
-    for _ in 1..hull.len() {
-        // rotate
-        if cross(&hull[l], &hull[(l + 1) % hull.len()], &hull[r], &hull[(r + 1) % hull.len()]) < 0 {
-            l = (l + 1) % hull.len();
-        } else {
-            r = (r + 1) % hull.len();
-        }
-        // update
-        let t = dist(&hull[l], &hull[r]);
-        if t > d {
-            d = t;
-            ret = (hull[l].clone(), hull[r].clone());
-        }
+pub fn main() { read();
+     let (n, l) = (next::<usize>(), next::<f64>());
+    let mut points = Vec::new();
+    for _ in 0..n {
+        points.push(Point { x: next(), y: next() });
     }
+    let hull = graham(points);
 
-    ret
+    let mut ans = 0.0;
+    for i in 0..hull.len() {
+        let j = (i + 1) % hull.len();
+        ans += (dist(&hull[i], &hull[j]) as f64).sqrt();
+    }
+    println!("{:.0}", ans + 2.0 * std::f64::consts::PI * l);
+}
+
+macro_rules! println { ($($t:tt)*) => {SO.with(|c| writeln!(c.borrow_mut(), $($t)*).unwrap())};}
+macro_rules! print   { ($($t:tt)*) => {SO.with(|c| write!  (c.borrow_mut(), $($t)*).unwrap())};}
+use println; use print;
+use std::{io::*, cell::*, str::*, fmt::Debug};
+static mut BUF: String = String::new();
+static mut IT: Option<SplitAsciiWhitespace> = None;
+thread_local! {
+    static SI: RefCell<BufReader<StdinLock<'static>>> = RefCell::new(BufReader::new(stdin().lock()));
+    static SO: RefCell<BufWriter<StdoutLock<'static>>> = RefCell::new(BufWriter::new(stdout().lock()));
+}
+fn read() { unsafe {
+    BUF.clear();
+    SI.with(|c| c.borrow_mut().read_to_string(&mut BUF).unwrap());
+    IT = Some(BUF.split_ascii_whitespace());
+}}
+fn next<T: FromStr>() -> T where <T as FromStr>::Err: Debug {
+    unsafe { IT.as_mut().unwrap().next().unwrap().parse().unwrap() }
 }
