@@ -23,21 +23,6 @@ fn union(root: &mut Vec<usize>, rank: &mut Vec<usize>, x: usize, y: usize) {
     }
 }
 
-fn mst(e: &[(usize, usize, usize, usize)], n: usize) -> (usize, bool) {
-    let mut e = e.to_vec();
-    e.sort_unstable();
-    let mut root = (0..=n).collect::<Vec<_>>();
-    let mut rank = vec![0; n+1];
-    let mut mst = 0;
-    for &(c, _, u, v) in e.iter() {
-        let (u, v) = (find(&mut root, u), find(&mut root, v));
-        if u == v { continue; }
-        union(&mut root, &mut rank, u, v);
-        mst += c;
-    }
-    let r = find(&mut root, 1);
-    (mst, (2..=n).all(|i| find(&mut root, i) == r))
-}
 pub fn main() { read();
     let (n, q) = (next::<usize>(), next::<usize>());
     let mut e = vec![];
@@ -45,22 +30,25 @@ pub fn main() { read();
         let (u, v, c, t) = (next::<usize>(), next::<usize>(), next::<usize>(), next::<usize>());
         e.push((c, t, u, v));
     }
+    e.sort_unstable_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)));
 
-    let (m, x) = mst(&e, n);
-    if !x { println!("-1"); return; }
-
-    let mut v = e.iter().map(|&(_, t, _, _)| t).collect::<Vec<_>>();
-    v.sort_unstable(); v.dedup();
-    let (mut l, mut r) = (0, v.len());
-    while l < r {
-        let mid = (l + r) / 2;
-        let e = e.iter().filter(|&&(_, t, _, _)| t <= v[mid]).map(|&x| x).collect::<Vec<_>>();
-        let (k, x) = mst(&e, n);
-        if x && k == m { r = mid; }
-        else { l = mid + 1; }
+    let mut root = (0..=n).collect::<Vec<_>>();
+    let mut rank = vec![0; n+1];
+    let (mut ans, mut mt) = (0, 0);
+    for (c, t, u, v) in e {
+        let (u, v) = (find(&mut root, u), find(&mut root, v));
+        if u == v { continue; }
+        union(&mut root, &mut rank, u, v);
+        ans += c;
+        mt = mt.max(t);
     }
 
-    println!("{} {}", v[l], m);
+    let r = find(&mut root, 1);
+    if (2..=n).all(|x| find(&mut root, x) == r) {
+        println!("{} {}", mt, ans);
+    } else {
+        println!("-1");
+    }
 }
 
 macro_rules! println { ($($t:tt)*) => {SO.with(|c| writeln!(c.borrow_mut(), $($t)*).unwrap())};}
