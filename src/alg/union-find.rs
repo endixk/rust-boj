@@ -1,18 +1,13 @@
 fn find(root: &mut Vec<usize>, x: usize) -> usize {
-    if root[x] == x {
-        x
-    } else {
+    if root[x] == x { x }
+    else {
         root[x] = find(root, root[x]);
         root[x]
     }
 }
-
 fn union(root: &mut Vec<usize>, rank: &mut Vec<usize>, x: usize, y: usize) {
-    let x = find(root, x);
-    let y = find(root, y);
-    if x == y {
-        return;
-    }
+    let (x, y) = (find(root, x), find(root, y));
+    if x == y { return; }
     if rank[x] < rank[y] {
         root[x] = y;
     } else {
