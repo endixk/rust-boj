@@ -1,9 +1,5 @@
 const MOD: u64 = 1_000_000_007;
-#[derive(Clone)]
-struct Matrix {
-    n: usize,
-    m: Vec<Vec<u64>>,
-}
+#[derive(Clone)] struct Matrix { n: usize, m: Vec<Vec<u64>>, }
 impl Matrix {
     fn new(n: usize, m: Vec<Vec<u64>>) -> Self {
         Self { n, m }
@@ -18,9 +14,12 @@ impl Matrix {
     fn mul(&mut self, rhs: &Self) {
         let mut m = vec![vec![0; self.n]; self.n];
         for i in 0..self.n {
-            for j in 0..self.n {
-                for k in 0..self.n {
-                    m[i][j] = (m[i][j] + self.m[i][k] * rhs.m[k][j]) % MOD;
+            let rrow = &self.m[i];
+            for k in 0..self.n {
+                let val = rrow[k];
+                let row = &rhs.m[k];
+                for j in 0..self.n {
+                    m[i][j] = (m[i][j] + val * row[j]) % MOD;
                 }
             }
         }
