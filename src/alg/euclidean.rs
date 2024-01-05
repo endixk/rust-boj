@@ -12,6 +12,11 @@ fn mmi(a: i64, m: i64) -> i64 {
     let (_, x, _) = xgcd(a, m);
     (x + m) % m
 }
+fn crt(a: i64, b: i64, m: i64, n: i64) -> i64 {
+    let (_, x, y) = xgcd(m, n);
+    let k = m * n;
+    (a * n % k * y % k + b * m % k * x % k + k) % k
+}
 
 const MOD: i64 = 1_000_000_007;
 const MAX: usize = 100_001;

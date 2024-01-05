@@ -1,7 +1,6 @@
-fn mul(a: u64, b: u64, m: u64) -> u64 {
+#[inline] fn mul(a: u64, b: u64, m: u64) -> u64 {
     (a as u128 * b as u128 % m as u128) as u64
 }
-
 fn pow(mut a: u64, mut b: u64, m: u64) -> u64 {
     let mut ret = 1;
     while b > 0 {
@@ -11,7 +10,6 @@ fn pow(mut a: u64, mut b: u64, m: u64) -> u64 {
     }
     ret
 }
-
 fn miller_rabin(n: u64, a: u64) -> bool {
     if n == a { return true }
     let mut d = n - 1;
@@ -36,9 +34,7 @@ fn is_prime(n: u64) -> bool {
 const SEED: u64 = 14839709780919905126;
 const XORA: u64 = 11618625973841399673;
 const XORC: u64 = 12090038175212513926;
-struct Random {
-    state: u64,
-}
+struct Random { state: u64, }
 impl Random {
     fn new() -> Self {
         Random { state: SEED }
@@ -52,20 +48,19 @@ impl Random {
     }
 }
 
-static mut FACTORS: Vec<u64> = Vec::new();
 fn gcd(a: u64, b: u64) -> u64 {
     if b == 0 { a } else { gcd(b, a % b) }
 }
-fn pollard_rho(n: u64, rng: &mut Random) {
+fn pollard_rho(n: u64, factors: &mut Vec<u64>, rng: &mut Random) {
     if n == 1 { return; }
     for &p in &TP {
         if n % p == 0 {
-            unsafe { FACTORS.push(p); }
-            pollard_rho(n / p, rng);
+            factors.push(p);
+            pollard_rho(n / p, factors, rng);
             return;
         }
     }
-    if is_prime(n) { unsafe { FACTORS.push(n); } return; }
+    if is_prime(n) { factors.push(n); return; }
     let mut x = rng.next_interval(2, n);
     let mut y = x;
     let c = rng.next_interval(2, n);
@@ -77,6 +72,6 @@ fn pollard_rho(n: u64, rng: &mut Random) {
         let abs = if x > y { x - y } else { y - x };
         d = gcd(abs, n);
     }
-    pollard_rho(d, rng);
-    pollard_rho(n / d, rng);
+    pollard_rho(d, factors, rng);
+    pollard_rho(n / d, factors, rng);
 }

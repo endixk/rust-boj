@@ -1,7 +1,6 @@
-#[derive(Debug, Clone, Copy)]
-struct Complex {
-    r: f64, i: f64
-}
+use std::ops::{Add, Sub, Mul, Div};
+use std::f64::consts::PI;
+#[derive(Debug, Clone, Copy)] struct Complex { r: f64, i: f64 }
 impl Complex {
     fn default() -> Self {
         Self { r: 0.0, i: 0.0 }
@@ -35,8 +34,6 @@ impl Div for Complex {
         Self::new((self.r * rhs.r + self.i * rhs.i) / d, (self.i * rhs.r - self.r * rhs.i) / d)
     }
 }
-
-const PI: f64 = std::f64::consts::PI;
 fn fft(v: &mut Vec<Complex>, w: Complex) {
     let n = v.len();
     if n == 1 { return; }
@@ -57,7 +54,6 @@ fn fft(v: &mut Vec<Complex>, w: Complex) {
         p = p * w;
     }
 }
-
 fn multiply(mut a: Vec<Complex>, mut b: Vec<Complex>) -> Vec<Complex> {
     let n = (a.len() + b.len()).next_power_of_two();
     a.resize(n, Complex::default());
@@ -72,4 +68,10 @@ fn multiply(mut a: Vec<Complex>, mut b: Vec<Complex>) -> Vec<Complex> {
 
     for i in 0..n { a[i] = a[i] / Complex::new(n as f64, 0.0); }
     a
+}
+fn poly_multiply(a: Vec<i64>, b: Vec<i64>) -> Vec<i64> {
+    let a = a.iter().map(|&x| Complex::new(x as f64, 0.0)).collect::<Vec<_>>();
+    let b = b.iter().map(|&x| Complex::new(x as f64, 0.0)).collect::<Vec<_>>();
+    let c = multiply(a, b);
+    c.iter().map(|&x| x.r.round() as i64).collect::<Vec<_>>()
 }

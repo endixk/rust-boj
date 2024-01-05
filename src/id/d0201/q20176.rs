@@ -1,3 +1,4 @@
+// BOJ 20176 [Needle]
 fn pow(mut a: i64, mut b: i64, m: i64) -> i64 {
     let mut r = 1;
     while b > 0 {
@@ -59,4 +60,36 @@ fn multiply(mut a: Vec<i64>, mut b: Vec<i64>, m: i64, w: i64) -> Vec<i64> {
     }
     ntt(&mut a, m, w, true);
     a
+}
+pub fn main() { read();
+    let mut a = vec![0; 60001];
+    for _ in 0..next() { a[(next::<i32>() + 30000) as usize] = 1; }
+
+    let n = next::<usize>();
+    let q = (0..n).map(|_| (next::<i32>() + 30000 << 1) as usize).collect::<Vec<_>>();
+
+    let mut b = vec![0; 60001];
+    for _ in 0..next() { b[(next::<i32>() + 30000) as usize] = 1; }
+
+    let m = multiply(a, b, 998244353, 3);
+    println!("{}", q.iter().map(|&x| m[x]).sum::<i64>());
+}
+
+macro_rules! println { ($($t:tt)*) => {SO.with(|c| writeln!(c.borrow_mut(), $($t)*).unwrap())};}
+macro_rules! print   { ($($t:tt)*) => {SO.with(|c| write!  (c.borrow_mut(), $($t)*).unwrap())};}
+use println; use print;
+use std::{io::*, cell::*, str::*, fmt::Debug};
+static mut BUF: String = String::new();
+static mut IT: Option<SplitAsciiWhitespace> = None;
+thread_local! {
+    static SI: RefCell<BufReader<StdinLock<'static>>> = RefCell::new(BufReader::new(stdin().lock()));
+    static SO: RefCell<BufWriter<StdoutLock<'static>>> = RefCell::new(BufWriter::new(stdout().lock()));
+}
+fn read() { unsafe {
+    BUF.clear();
+    SI.with(|c| c.borrow_mut().read_to_string(&mut BUF).unwrap());
+    IT = Some(BUF.split_ascii_whitespace());
+}}
+fn next<T: FromStr>() -> T where <T as FromStr>::Err: Debug {
+    unsafe { IT.as_mut().unwrap().next().unwrap().parse().unwrap() }
 }
