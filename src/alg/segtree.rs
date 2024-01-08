@@ -6,12 +6,10 @@ struct SegTree<T> {
 impl<T> SegTree<T> where
     T: std::ops::AddAssign + std::ops::Add<Output=T> + Default + Copy {
     fn new(n: usize) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
-        Self { n: m, v: vec![T::default(); m<<1] }
+        Self { n: n.next_power_of_two(), v: vec![T::default(); n.next_power_of_two()<<1] }
     }
     fn update(&mut self, mut i: usize, x: T) {
-        i += self.n;
+        i |= self.n;
         self.v[i] = x;
         while i > 1 {
             i >>= 1;
@@ -19,7 +17,7 @@ impl<T> SegTree<T> where
         }
     }
     fn query(&mut self, mut l: usize, mut r: usize) -> T {
-        l += self.n; r += self.n;
+        l |= self.n; r |= self.n;
         let mut ans = T::default();
         while l <= r {
             if l & 1 == 1 { ans += self.v[l]; l += 1; }
@@ -38,12 +36,10 @@ struct MaxSegTree<T> {
 impl<T> MaxSegTree<T> where
     T: Ord + Default + Copy {
     fn new(n: usize) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
-        Self { n: m, v: vec![T::default(); m<<1] }
+        Self { n: n.next_power_of_two(), v: vec![T::default(); n.next_power_of_two()<<1] }
     }
     fn update(&mut self, mut i: usize, x: T) {
-        i += self.n;
+        i |= self.n;
         self.v[i] = x;
         while i > 1 {
             i >>= 1;
@@ -51,7 +47,7 @@ impl<T> MaxSegTree<T> where
         }
     }
     fn query(&self, mut l: usize, mut r: usize) -> T {
-        l += self.n; r += self.n;
+        l |= self.n; r |= self.n;
         let mut ans: Option<T> = None;
         while l <= r {
             if l & 1 == 1 {
@@ -78,12 +74,10 @@ struct MinSegTree<T> {
 impl<T> MinSegTree<T> where
     T: Ord + Default + Copy {
     fn new(n: usize) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
-        Self { n: m, v: vec![T::default(); m<<1] }
+        Self { n: n.next_power_of_two(), v: vec![T::default(); n.next_power_of_two()<<1] }
     }
     fn update(&mut self, mut i: usize, x: T) {
-        i += self.n;
+        i |= self.n;
         self.v[i] = x;
         while i > 1 {
             i >>= 1;
@@ -91,7 +85,7 @@ impl<T> MinSegTree<T> where
         }
     }
     fn query(&self, mut l: usize, mut r: usize) -> T {
-        l += self.n; r += self.n;
+        l |= self.n; r |= self.n;
         let mut ans: Option<T> = None;
         while l <= r {
             if l & 1 == 1 {
@@ -118,9 +112,7 @@ struct CountSegTree {
 }
 impl CountSegTree {
     fn new(n: usize) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
-        Self { n: m, c: vec![0; m<<1], v: vec![0; m<<1] }
+        Self { n: n.next_power_of_two(), c: vec![0; n.next_power_of_two()<<1], v: vec![0; n.next_power_of_two()<<1] }
     }
     fn update(&mut self, i: usize, s: usize, e: usize, l: usize, r: usize, x: i32) {
         if r < s || e < l { return; }
@@ -156,8 +148,7 @@ impl<T> MergeSortTree<T> where T: Ord + Default + Copy {
         c
     }
     fn new(n: usize, a: &[T]) -> Self {
-        let mut m = 1;
-        while m < n { m <<= 1; }
+        let mut m = n.next_power_of_two();
         let mut v = vec![vec![]; m<<1];
         for i in 0..n { v[i+m] = vec![a[i]]; }
         for i in (1..m).rev() { v[i] = Self::merge(&v[i<<1], &v[i<<1|1]); }
@@ -166,7 +157,7 @@ impl<T> MergeSortTree<T> where T: Ord + Default + Copy {
     fn query(&self, mut l: usize, mut r: usize, x: T, y: T) -> usize {
         if l > r { return 0; }
         if x > y { return 0; }
-        l += self.n; r += self.n;
+        l |= self.n; r |= self.n;
         let mut ans = 0;
         while l <= r {
             if l & 1 == 1 {
