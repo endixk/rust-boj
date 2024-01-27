@@ -26,3 +26,28 @@ fn kmp(s: &String, t: &String) -> u32 {
     }
     occ
 }
+
+fn z(s: &String) -> Vec<usize> {
+    let (s, n) = (s.as_bytes(), s.len());
+    let mut z = vec![0; n];
+    z[0] = n;
+
+    let (mut l, mut r) = (0, 0);
+    for i in 1..n {
+        if i > r {
+            l = i; r = i;
+            while r < n && s[r-l] == s[r] { r += 1; }
+            z[i] = r-l; r -= 1;
+        } else {
+            let k = i-l;
+            if z[k] < r-i+1 { z[i] = z[k]; }
+            else {
+                l = i;
+                while r < n && s[r-l] == s[r] { r += 1; }
+                z[i] = r-l; r -= 1;
+            }
+        }
+    }
+
+    z
+}
