@@ -1,12 +1,5 @@
-fn tarjan(
-    scc: &mut Vec<Vec<usize>>,
-    adj: &Vec<Vec<usize>>,
-    ids: &mut Vec<usize>,
-    vis: &mut Vec<bool>,
-    stk: &mut Vec<usize>,
-    cnt: &mut usize,
-    cur: usize) -> usize {
-
+fn tarjan(scc: &mut Vec<Vec<usize>>, adj: &Vec<Vec<usize>>, ids: &mut Vec<usize>,
+          vis: &mut Vec<bool>, stk: &mut Vec<usize>, cnt: &mut usize, cur: usize) -> usize {
     *cnt += 1;
     let mut ret = *cnt;
     vis[cur] = true;
