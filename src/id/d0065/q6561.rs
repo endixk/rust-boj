@@ -1,5 +1,4 @@
 // BOJ 6561 [Decode the Tree]
-// TODO: SPJ not implemented, impossible to solve
 fn dfs(adj: &Vec<Vec<usize>>, u: usize, p: usize, f: bool) {
     if f { print!(" "); }
     print!("({}", u + 1);
@@ -12,7 +11,10 @@ fn dfs(adj: &Vec<Vec<usize>>, u: usize, p: usize, f: bool) {
 pub fn main() { read();
     while peek() {
         let v = next::<String>().split_ascii_whitespace().map(|x| x.parse::<usize>().unwrap() - 1).collect::<Vec<_>>();
-        if v.len() == 0 { break; }
+        if v.len() == 0 {
+            if !peek() { break; }
+            println!("(1)"); continue;
+        }
         let n = v.len() + 1;
 
         let mut pru = vec![1; n];
@@ -27,8 +29,7 @@ pub fn main() { read();
         let (x, y) = (pru.iter().position(|&x| x == 1).unwrap(), pru.iter().rposition(|&x| x == 1).unwrap());
         adj[x].push(y); adj[y].push(x);
 
-        for v in adj.iter_mut() { v.sort_by(|x, y| y.cmp(x)); }
-        dfs(&adj, n-1, n, false);
+        dfs(&adj, *v.last().unwrap(), n, false);
         println!();
     }
 }

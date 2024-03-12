@@ -1,5 +1,4 @@
 // BOJ 6544 [Fixed Partition Contest Management]
-// TODO: SPJ not implemented, impossible to solve
 const INF: usize = 0x3f3f3f3f;
 pub fn main() { read();
     for tc in 1.. {
@@ -31,14 +30,14 @@ pub fn main() { read();
 
             let mut s = 0;
             for v in t.iter_mut() {
-                v.sort_by(|a, b| a.0.cmp(&b.0).then(b.1.cmp(&a.1)));
+                v.sort_by(|a, b| a.0.cmp(&b.0).then(a.1.cmp(&b.1)));
                 let mut p = 0;
                 for &mut (x, _) in v {
                     p += x; s += p;
                 }
             }
 
-            if s <= min { min = s; mbt = t.clone(); }
+            if s < min { min = s; mbt = t.clone(); }
         }
 
         let mut t = vec![(0, 0, 0); n];
@@ -51,7 +50,7 @@ pub fn main() { read();
         }
 
         println!("Case {}", tc);
-        println!("Average solution time = {:.2}", min as f64 / n as f64);
+        println!("Average solution time = {:.2}", min as f64 / n as f64 + 1e-9);
         for (i, (x, s, e)) in t.into_iter().enumerate() {
             println!("Problem {} is solved by member {x} from {s} to {e}", i+1);
         }
