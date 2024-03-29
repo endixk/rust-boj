@@ -48,7 +48,7 @@ impl Random {
     }
 }
 static mut RANDOM: Random = Random { state: SEED };
-fn static_random() -> &'static mut Random { unsafe { &mut RANDOM } }
+fn static_random() -> &'static mut Random { unsafe { &mut *std::ptr::addr_of_mut!(RANDOM) } }
 
 fn gcd(a: u128, b: u128) -> u128 {
     if b == 0 { a } else { gcd(b, a % b) }
@@ -254,7 +254,7 @@ thread_local! {
 }
 fn read() { unsafe {
     BUF.clear();
-    SI.with(|c| c.borrow_mut().read_to_string(&mut BUF).unwrap());
+    SI.with(|c| c.borrow_mut().read_to_string(&mut *std::ptr::addr_of_mut!(BUF)).unwrap());
     IT = Some(BUF.split_ascii_whitespace());
 }}
 fn next<T: FromStr>() -> T where <T as FromStr>::Err: Debug {

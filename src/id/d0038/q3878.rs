@@ -21,8 +21,8 @@ struct Point {
 impl Ord for Point {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         unsafe {
-            ccw(&ORI, other, self).cmp(&0)
-                .then(dist(&ORI, self).cmp(&dist(&ORI, other)))
+            ccw(&*std::ptr::addr_of!(ORI), other, self).cmp(&0)
+                .then(dist(&*std::ptr::addr_of!(ORI), self).cmp(&dist(&*std::ptr::addr_of!(ORI), other)))
         }
     }
 }

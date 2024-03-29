@@ -39,7 +39,7 @@ thread_local! {
 }
 fn read() { unsafe {
     BUF.clear();
-    SI.with(|c| c.borrow_mut().read_to_string(&mut BUF).unwrap());
+    SI.with(|c| c.borrow_mut().read_to_string(&mut *std::ptr::addr_of_mut!(BUF)).unwrap());
     IT = Some(BUF.split_ascii_whitespace());
 }}
 fn next<T: FromStr>() -> T where <T as FromStr>::Err: Debug {

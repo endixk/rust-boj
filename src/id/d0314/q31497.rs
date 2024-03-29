@@ -30,7 +30,7 @@ thread_local! {
 }
 fn next() -> String { unsafe {
     BUF.clear();
-    SI.with(|c| c.borrow_mut().read_line(&mut BUF).unwrap());
+    SI.with(|c| c.borrow_mut().read_line(&mut *std::ptr::addr_of_mut!(BUF)).unwrap());
     BUF.clone()
 }}
 fn flush() { SO.with(|c| c.borrow_mut().flush().unwrap()); }

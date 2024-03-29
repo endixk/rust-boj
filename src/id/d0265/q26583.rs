@@ -24,7 +24,7 @@ thread_local! {
 }
 fn read() -> bool { unsafe {
     BUF.clear();
-    SI.with(|c| c.borrow_mut().read_line(&mut BUF).unwrap());
+    SI.with(|c| c.borrow_mut().read_line(&mut *std::ptr::addr_of_mut!(BUF)).unwrap());
     IT = Some(BUF.split_ascii_whitespace());
     BUF.len() > 0
 }}

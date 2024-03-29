@@ -6,8 +6,8 @@ static mut ORI: Point = Point { x: 0, y: 0, xc: 0, i: 0, q: true };
 impl Ord for Point {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         unsafe {
-            ccw(&ORI, other, self).cmp(&0)
-                .then(dsq(&ORI, self).cmp(&dsq(&ORI, other)).then(self.q.cmp(&other.q)))
+            ccw(&*std::ptr::addr_of!(ORI), other, self).cmp(&0)
+                .then(dsq(&*std::ptr::addr_of!(ORI), self).cmp(&dsq(&*std::ptr::addr_of!(ORI), other)).then(self.q.cmp(&other.q)))
         }
     }
 }
@@ -106,7 +106,7 @@ thread_local! {
 }
 fn read() { unsafe {
     BUF.clear();
-    SI.with(|c| c.borrow_mut().read_to_string(&mut BUF).unwrap());
+    SI.with(|c| c.borrow_mut().read_to_string(&mut *std::ptr::addr_of_mut!(BUF)).unwrap());
     IT = Some(BUF.split_ascii_whitespace());
 }}
 fn next<T: FromStr>() -> T where <T as FromStr>::Err: Debug {

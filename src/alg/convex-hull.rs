@@ -3,8 +3,8 @@ static mut ORI: Point = Point { x: 0, y: 0 };
 impl Ord for Point {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         unsafe {
-            ccw(&ORI, other, self).cmp(&0)
-                .then(dsq(&ORI, self).cmp(&dsq(&ORI, other)))
+            ccw(&*std::ptr::addr_of!(ORI), other, self).cmp(&0)
+                .then(dsq(&*std::ptr::addr_of!(ORI), self).cmp(&dsq(&*std::ptr::addr_of!(ORI), other)))
         }
     }
 }
