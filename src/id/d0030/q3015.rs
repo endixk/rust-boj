@@ -1,44 +1,29 @@
-// BOJ 3015 [PATRIK]
-// Supported by GitHub Copilot
-
-use std::io::{self, Read};
-
-fn read<T>(si: &mut T) -> String where T: Read {
-    let mut s = String::new();
-    si.read_to_string(&mut s).unwrap();
-    s
-}
-
-fn next<T>(it: &mut std::str::SplitAsciiWhitespace) -> T where
-    T: std::str::FromStr,
-    <T as std::str::FromStr>::Err: std::fmt::Debug {
-    it.next().unwrap().parse().unwrap()
-}
-
+// BOJ 3015 [Oasis 27.08.24]
+extern "C" { fn mmap(a: *mut u8, l: usize, p: i32, f: i32, d: i32, o: i64) -> *mut u8; }
+fn input(size: usize) -> *const u8 { unsafe { mmap(0 as *mut u8, size, 1, 2, 0, 0) } }
+fn ptr(p: &mut *const u8) -> u32 { unsafe {
+    let mut n = 0;
+    while **p & 16 != 0 { n = n * 10 + (**p as u32 & 15); *p = p.offset(1) }
+    *p = p.offset(1);
+    n
+}}
 pub fn main() {
-    let mut si = io::BufReader::new(io::stdin().lock());
-    let s = read(&mut si);
-    let mut it = s.split_ascii_whitespace();
-
+    let mut p = input(5500055);
     let mut st = Vec::new();
     let mut ans = 0;
-    for _ in 0..next(&mut it) {
-        let mut h = (next::<i32>(&mut it), 1u64);
-        while let Some((x, k)) = st.pop() {
-            if x > h.0 {
-                ans += 1;
-                st.push((x, k));
-                st.push(h);
-                break;
-            } else if x == h.0 {
-                ans += k;
-                h = (x, k + 1);
+    for _ in 0..ptr(&mut p) {
+        let mut h = (ptr(&mut p) as u64)<<20|1;
+        while let Some(q) = st.pop() {
+            let (x, k) = (q>>20, q&0xfffff);
+            if x > h>>20 {
+                ans += 1; st.push(q); st.push(h); break;
+            } else if x == h>>20 {
+                ans += k; h = x<<20|k+1;
             } else {
                 ans += k;
             }
         }
         if st.is_empty() { st.push(h); }
     }
-
     println!("{}", ans);
 }
