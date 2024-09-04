@@ -1,10 +1,7 @@
 // Sum segment tree
-struct SegTree<T> {
-    n: usize,
-    v: Vec<T>,
-}
-impl<T> SegTree<T> where
-    T: std::ops::AddAssign + std::ops::Add<Output=T> + Default + Copy {
+type T = u64;
+struct SegTree { n: usize, v: Vec<T>, }
+impl SegTree {
     fn new(n: usize) -> Self {
         Self { n: n.next_power_of_two(), v: vec![T::default(); n.next_power_of_two()<<1] }
     }
@@ -29,12 +26,9 @@ impl<T> SegTree<T> where
 }
 
 // Max segment tree
-struct MaxSegTree<T> {
-    n: usize,
-    v: Vec<T>,
-}
-impl<T> MaxSegTree<T> where
-    T: Ord + Default + Copy {
+type T = u64;
+struct MaxSegTree { n: usize, v: Vec<T>, }
+impl MaxSegTree {
     fn new(n: usize) -> Self {
         Self { n: n.next_power_of_two(), v: vec![T::default(); n.next_power_of_two()<<1] }
     }
@@ -67,12 +61,9 @@ impl<T> MaxSegTree<T> where
 }
 
 // Min segment tree
-struct MinSegTree<T> {
-    n: usize,
-    v: Vec<T>,
-}
-impl<T> MinSegTree<T> where
-    T: Ord + Default + Copy {
+type T = u64;
+struct MinSegTree { n: usize, v: Vec<T>, }
+impl MinSegTree {
     fn new(n: usize) -> Self {
         Self { n: n.next_power_of_two(), v: vec![T::default(); n.next_power_of_two()<<1] }
     }
