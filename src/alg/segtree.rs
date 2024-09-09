@@ -96,16 +96,17 @@ impl MinSegTree {
 }
 
 // Count segment tree
+type T = i32;
 struct CountSegTree {
     n: usize,
-    c: Vec<i32>,
+    c: Vec<T>,
     v: Vec<usize>,
 }
 impl CountSegTree {
     fn new(n: usize) -> Self {
         Self { n: n.next_power_of_two(), c: vec![0; n.next_power_of_two()<<1], v: vec![0; n.next_power_of_two()<<1] }
     }
-    fn update(&mut self, i: usize, s: usize, e: usize, l: usize, r: usize, x: i32) {
+    fn update(&mut self, i: usize, s: usize, e: usize, l: usize, r: usize, x: T) {
         if r < s || e < l { return; }
         if l <= s && e <= r {
             self.c[i] += x;
@@ -124,8 +125,9 @@ impl CountSegTree {
 }
 
 // Merge sort tree
-struct MergeSortTree<T> { n: usize, v: Vec<Vec<T>> }
-impl<T> MergeSortTree<T> where T: Ord + Default + Copy {
+type T = i64;
+struct MergeSortTree { n: usize, v: Vec<Vec<T>> }
+impl MergeSortTree {
     fn merge(a: &[T], b: &[T]) -> Vec<T> {
         let (mut i, mut j) = (0, 0);
         let (m, n) = (a.len(), b.len());
@@ -162,5 +164,31 @@ impl<T> MergeSortTree<T> where T: Ord + Default + Copy {
             l >>= 1; r >>= 1;
         }
         ans
+    }
+}
+
+// Maximum subarray sum segment tree
+type T = i64;
+struct SegTree { n: usize, l: Vec<T>, r: Vec<T>, m: Vec<T>, s: Vec<T> }
+impl SegTree {
+    fn new(n: usize) -> Self {
+        Self {
+            n: n.next_power_of_two(),
+            l: vec![T::default(); n.next_power_of_two()<<1],
+            r: vec![T::default(); n.next_power_of_two()<<1],
+            m: vec![T::default(); n.next_power_of_two()<<1],
+            s: vec![T::default(); n.next_power_of_two()<<1],
+        }
+    }
+    fn update(&mut self, mut i: usize, x: T) {
+        i |= self.n;
+        self.l[i] = x; self.r[i] = x; self.m[i] = x; self.s[i] = x;
+        while i > 1 {
+            i >>= 1;
+            self.l[i] = self.l[i<<1].max(self.s[i<<1] + self.l[i<<1|1]);
+            self.r[i] = self.r[i<<1|1].max(self.s[i<<1|1] + self.r[i<<1]);
+            self.m[i] = self.m[i<<1].max(self.m[i<<1|1]).max(self.r[i<<1] + self.l[i<<1|1]);
+            self.s[i] = self.s[i<<1] + self.s[i<<1|1];
+        }
     }
 }
