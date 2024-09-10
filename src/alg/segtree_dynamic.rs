@@ -43,3 +43,47 @@ impl PST {
             self.query_cnt(m + 1, e, l, r, self.tree[lpos].r, self.tree[rpos].r)
     }
 }
+
+#[derive(Clone, Copy)] struct Segment { a: i64, b: i64 }
+impl Segment {
+    fn new(a: i64, b: i64) -> Self { Self { a, b } }
+    fn get(&self, x: i64) -> i64 { self.a * x + self.b }
+}
+const INF: i64 = 1<<62;
+struct Node { s: i64, e: i64, l: usize, r: usize, seg: Segment }
+impl Node { fn new(s: i64, e: i64) -> Self { Self { s, e, l: 0, r: 0, seg: Segment::new(0, INF) } } }
+struct LiChaoTree { tree: Vec<Node>, size: usize }
+impl LiChaoTree {
+    fn new(s: i64, e: i64) -> Self {
+        Self { tree: vec![Node::new(s, e), Node::new(s, e)], size: 2 }
+    }
+    fn insert(&mut self, s: i64, e: i64) -> usize {
+        self.tree.push(Node::new(s, e));
+        self.size += 1; self.size - 1
+    }
+    fn update(&mut self, i: usize, seg: Segment) {
+        let (s, e, ori) = (self.tree[i].s, self.tree[i].e, self.tree[i].seg);
+        let lc = ori.get(s) > seg.get(s);
+        let rc = ori.get(e) > seg.get(e);
+        if lc ^ rc {
+            let m = (s + e) / 2;
+            let mc = ori.get(m) > seg.get(m);
+            let alt = if mc { self.tree[i].seg = seg; ori } else { seg };
+            if lc ^ mc {
+                if self.tree[i].l == 0 { self.tree[i].l = self.insert(s, m); }
+                self.update(self.tree[i].l, alt);
+            } else {
+                if self.tree[i].r == 0 { self.tree[i].r = self.insert(m + 1, e); }
+                self.update(self.tree[i].r, alt);
+            }
+        } else if lc { self.tree[i].seg = seg; }
+    }
+    fn query(&self, i: usize, x: i64) -> i64 {
+        let node = &self.tree[i];
+        let mut ret = node.seg.get(x);
+        if x <= (node.s + node.e) / 2 {
+            if node.l != 0 { ret = ret.min(self.query(node.l, x)) }
+        } else if node.r != 0 { ret = ret.min(self.query(node.r, x)) }
+        ret
+    }
+}
