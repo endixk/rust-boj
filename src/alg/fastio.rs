@@ -7,10 +7,19 @@ fn u32(p: &mut *const u8) -> u32 { unsafe {
     *p = p.offset(1);
     n
 }}
+
 fn i32(p: &mut *const u8) -> i32 { unsafe {
     let mut n = 0;
     let neg = if **p == b'-' { *p = p.offset(1); true } else { false };
     while **p & 16 != 0 { n = n * 10 + (**p as i32 & 15); *p = p.offset(1) }
     *p = p.offset(1);
     if neg { -n } else { n }
+}}
+
+fn word(p: &mut *const u8) -> &'static str { unsafe {
+    let s = *p;
+    while **p != 10 { *p = p.offset(1) }
+    let r = from_utf8(std::slice::from_raw_parts(s, *p as usize - s as usize)).unwrap();
+    *p = p.offset(1);
+    r
 }}
